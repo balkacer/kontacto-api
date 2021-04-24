@@ -6,11 +6,17 @@ using System.Threading.Tasks;
 
 namespace kontacto_api.Controllers
 {
-    public class AuthController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase
     {
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Get()
         {
-            return View();
+            return Ok( new {
+                Name = "Cora",
+                LastName = "Zado"
+            });
         }
     }
 }

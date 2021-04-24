@@ -31,7 +31,9 @@ namespace kontacto_api
             services.AddDbContext<KontactoContext>(options => {
                 options.UseSqlServer(DB_CONNECTION_STRING);
             }, ServiceLifetime.Transient);
+
             services.AddControllers();
+            
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "kontacto_api", Version = "v1" });
             });
