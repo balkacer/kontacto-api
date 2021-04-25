@@ -1,12 +1,8 @@
 ﻿using kontacto_api.DTO;
-using kontacto_api.Models;
 using kontacto_api.Services;
 using kontacto_api.Tools;
 using kontacto_api.Tools.Enums;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace kontacto_api.Controllers
@@ -21,23 +17,23 @@ namespace kontacto_api.Controllers
             _service = service;
         }
 
-        [HttpGet("private/{id}")]
-        public async Task<IActionResult> GetPrivateUser(string id)
+        [HttpGet("user/{id}")]
+        public async Task<IActionResult> GetUser(string id)
         {
-            var pUser = await _service.GetPrivateUserDTOAsync(id);
+            var user = await _service.GetUserAsync(id);
             
-            if (pUser == null) {
-                return NotFound();
+            if (user == null) {
+                return NotFound(new Response("User not found!", ResponseCodeEnum.FAILED));
             }
             
-            return Ok(new Response("", ResponseCodeEnum.SUCCESSED, pUser));
+            return Ok(new Response("", ResponseCodeEnum.SUCCESSED, user));
         }
 
         [HttpPost("private")]
         public async Task<IActionResult> RegisterNewPrivateUser(PrivateUserDTO userDTO) {
             var pUser = await _service.CreateNewPrivateUserAsync(userDTO);
-            var pUserDTO = await _service.GetPrivateUserDTOAsync(pUser.UserId);
-            return Ok(new Response("", ResponseCodeEnum.SUCCESSED, pUserDTO));
+            var user = await _service.GetUserAsync(pUser.UserId);
+            return Ok(new Response("", ResponseCodeEnum.SUCCESSED, user));
         }
     }
 }
