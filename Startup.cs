@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using kontacto_api.Services;
 
 namespace kontacto_api
 {
@@ -33,6 +34,8 @@ namespace kontacto_api
             }, ServiceLifetime.Transient);
 
             services.AddControllers();
+
+            services.AddScoped<AuthService>();
             
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "kontacto_api", Version = "v1" });
