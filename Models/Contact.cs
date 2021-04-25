@@ -15,7 +15,7 @@ namespace kontacto_api.Models
         [Column("CONTACT_ID")]
         [StringLength(36)]
         public string ContactId { get; set; }
-        [Key]
+        // [Key]
         [Column("USER_ID")]
         [StringLength(36)]
         public string UserId { get; set; }
