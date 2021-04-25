@@ -57,7 +57,8 @@ namespace kontacto_api.Services
                 UserTypeId = pUserDTO.UserTypeId,
                 UserStatusId = pUserDTO.UserStatusId,
                 AddressId = pUserDTO.AddressId,
-                LastUpade = DateTime.Today
+                LastUpade = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow
             };
 
             user = await this.CreateNewUserAsync(user);
