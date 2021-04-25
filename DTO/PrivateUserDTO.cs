@@ -8,10 +8,10 @@ namespace kontacto_api.DTO
         public string SecondName { get; set; }
         public string FirstSurname { get; set; }
         public string SecondSurname { get; set; }
-        public string BusinnesId { get; set; }
+        public string BusinessId { get; set; }
         public bool? IsWorking { get; set; }
         public string Ocupation { get; set; }
-        public DateTime BirthDate { get; set; }
+        public string BirthDate { get; set; }
         public byte[] Image { get; set; }
         public string Username { get; set; }
         public string Nickname { get; set; }
@@ -29,10 +29,10 @@ namespace kontacto_api.DTO
         public string SecondName { get; set; }
         public string FirstSurname { get; set; }
         public string SecondSurname { get; set; }
-        public string BusinnesId { get; set; }
+        public string BusinessId { get; set; }
         public bool? IsWorking { get; set; }
         public string Ocupation { get; set; }
-        public DateTime BirthDate { get; set; }
+        public string BirthDate { get; set; }
         public byte[] Image { get; set; }
         public string Username { get; set; }
         public string Nickname { get; set; }

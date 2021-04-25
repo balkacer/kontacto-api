@@ -29,9 +29,9 @@ namespace kontacto_api.Models
         [Column("SECOND_SURNAME")]
         [StringLength(25)]
         public string SecondSurname { get; set; }
-        [Column("BUSINNES_ID")]
+        [Column("BUSINESS_ID")]
         [StringLength(36)]
-        public string BusinnesId { get; set; }
+        public string BusinessId { get; set; }
         [Column("IS_WORKING")]
         public bool? IsWorking { get; set; }
         [Column("OCUPATION")]
@@ -40,9 +40,9 @@ namespace kontacto_api.Models
         [Column("BIRTH_DATE", TypeName = "date")]
         public DateTime BirthDate { get; set; }
 
-        [ForeignKey(nameof(BusinnesId))]
+        [ForeignKey(nameof(BusinessId))]
         [InverseProperty(nameof(BusinessUser.PrivateUsers))]
-        public virtual BusinessUser Businnes { get; set; }
+        public virtual BusinessUser Business { get; set; }
         [ForeignKey(nameof(UserId))]
         [InverseProperty("PrivateUser")]
         public virtual User User { get; set; }

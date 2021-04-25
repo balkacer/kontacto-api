@@ -30,7 +30,7 @@ namespace kontacto_api.Models
         [ForeignKey(nameof(UserId))]
         [InverseProperty("BusinessUser")]
         public virtual User User { get; set; }
-        [InverseProperty(nameof(PrivateUser.Businnes))]
+        [InverseProperty(nameof(PrivateUser.Business))]
         public virtual ICollection<PrivateUser> PrivateUsers { get; set; }
     }
 }

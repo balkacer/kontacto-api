@@ -24,10 +24,10 @@ namespace kontacto_api.Services
                 SecondName = pUser.SecondName,
                 FirstSurname = pUser.FirstSurname,
                 SecondSurname = pUser.SecondSurname,
-                BusinnesId = pUser.BusinnesId,
+                BusinessId = pUser.BusinessId,
                 IsWorking = pUser.IsWorking,
                 Ocupation = pUser.Ocupation,
-                BirthDate = pUser.BirthDate,
+                BirthDate = pUser.BirthDate.ToString("dd/MM/yyyy"),
                 Image = user.Image,
                 Username = user.Username,
                 Nickname = user.Nickname,
@@ -69,10 +69,10 @@ namespace kontacto_api.Services
                 SecondName = pUserDTO.SecondName,
                 FirstSurname = pUserDTO.FirstSurname,
                 SecondSurname = pUserDTO.SecondSurname,
-                BusinnesId = pUserDTO.BusinnesId,
+                BusinessId = pUserDTO.BusinessId,
                 IsWorking = pUserDTO.IsWorking,
                 Ocupation = pUserDTO.Ocupation,
-                BirthDate = pUserDTO.BirthDate
+                BirthDate = DateTime.Parse(pUserDTO.BirthDate)
             };
 
             await _context.PrivateUsers.AddAsync(pUser);
