@@ -9,9 +9,6 @@ using Microsoft.EntityFrameworkCore;
 namespace kontacto_api.Models
 {
     [Table("USER")]
-    [Index(nameof(Id), Name = "UQ__USER__3214EC26318DFC7D", IsUnique = true)]
-    [Index(nameof(PrincipalEmail), Name = "UQ__USER__520DD73879F2FA80", IsUnique = true)]
-    [Index(nameof(Username), Name = "UQ__USER__B15BE12E87213D03", IsUnique = true)]
     public partial class User
     {
         public User()

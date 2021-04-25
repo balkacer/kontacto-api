@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 namespace kontacto_api.Models
 {
     [Table("USER_EMAIL")]
-    [Index(nameof(Email), Name = "UQ__USER_EMA__161CF724BA05FD51", IsUnique = true)]
     public partial class UserEmail
     {
         [Key]

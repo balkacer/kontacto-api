@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 namespace kontacto_api.Models
 {
     [Table("BUSINESS_USER")]
-    [Index(nameof(UserId), Name = "UQ__BUSINESS__F3BEEBFE29D95BAE", IsUnique = true)]
     public partial class BusinessUser
     {
         public BusinessUser()
