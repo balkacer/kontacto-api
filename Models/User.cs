@@ -57,10 +57,9 @@ namespace kontacto_api.Models
         [StringLength(36)]
         public string AddressId { get; set; }
         [Column("CREATED_AT", TypeName = "datetime")]
-        public DateTime? CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         [Column("LAST_UPADE", TypeName = "datetime")]
         public DateTime? LastUpade { get; set; }
-
         [ForeignKey(nameof(AddressId))]
         [InverseProperty("Users")]
         public virtual Address Address { get; set; }
