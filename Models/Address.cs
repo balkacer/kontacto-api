@@ -27,9 +27,9 @@ namespace kontacto_api.Models
         [Column("SECOND_ADDRESS")]
         [StringLength(100)]
         public string SecondAddress { get; set; }
-        [Column("LATITUDE", TypeName = "decimal(18, 0)")]
+        [Column("LATITUDE", TypeName = "decimal(17, 15)")]
         public decimal Latitude { get; set; }
-        [Column("LONGITUDE", TypeName = "decimal(18, 0)")]
+        [Column("LONGITUDE", TypeName = "decimal(18, 15)")]
         public decimal Longitude { get; set; }
         [Required]
         [Column("CITY_ID")]
