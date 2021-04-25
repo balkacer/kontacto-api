@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using kontacto_api.DTO;
+using kontacto_api.Models;
+using kontacto_api.Services;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +13,28 @@ namespace kontacto_api.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult Get()
+        private readonly AuthService _service;
+        public AuthController(AuthService service)
         {
-            return Ok( new {
-                Name = "Cora",
-                LastName = "Zado"
-            });
+            _service = service;
+        }
+
+        [HttpGet("private/{id}")]
+        public async Task<IActionResult> GetPrivateUser(string id)
+        {
+            var pUser = await _service.GetPrivateUserDTOAsync(id);
+            
+            if (pUser == null) {
+                return NotFound();
+            }
+            
+            return Ok(pUser);
+        }
+
+        [HttpPost("private")]
+        public async Task<IActionResult> RegisterNewPrivateUser(PrivateUserDTO userDTO) {
+            var pUser = await _service.CreateNewPrivateUserAsync(userDTO);
+            return CreatedAtAction( nameof(GetPrivateUser), new { id = pUser.UserId } );
         }
     }
 }
