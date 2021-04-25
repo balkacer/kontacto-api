@@ -34,7 +34,7 @@ namespace kontacto_api.Controllers
         [HttpPost("private")]
         public async Task<IActionResult> RegisterNewPrivateUser(PrivateUserDTO userDTO) {
             var pUser = await _service.CreateNewPrivateUserAsync(userDTO);
-            return CreatedAtAction( nameof(GetPrivateUser), new { id = pUser.UserId } );
+            return CreatedAtAction( nameof(GetPrivateUser), new { id = pUser.UserId }, new GetPrivateUserDTO() );
         }
     }
 }
