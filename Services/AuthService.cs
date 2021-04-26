@@ -63,17 +63,28 @@ namespace kontacto_api.Services
         }
 
         private async Task<GetBusinessUserDTO> GetBusinessUserDTOAsync(string id) {
-            var user = await _context.Users.FindAsync(id);
+
+            var user = await _context.Users
+                .Include(s => s.UserStatus)
+                .Include(t => t.UserType)
+                .Include(a => a.Address)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            var city = await _context.AddressCities
+                .Include(c => c.Country)
+                .FirstOrDefaultAsync(ct => ct.Id == user.Address.CityId);
+
             var bUser = await _context.BusinessUsers.FindAsync(id);
 
-            var addresObj = new AddressDTO {
+            var addresObj = new AddressDTO
+            {
                 Address = user.Address.Address1,
                 SecondAddress = user.Address.SecondAddress,
                 Latitude = user.Address.Latitude,
                 Longitude = user.Address.Longitude,
-                City = user.Address.City.Name,
-                Country = user.Address.City.Country.Name,
-                CountryCode = user.Address.City.Country.Code
+                City = city.Name,
+                Country = city.Country.Name,
+                CountryCode = city.Country.Code
             };
 
             var bUserDTO = new GetBusinessUserDTO {
