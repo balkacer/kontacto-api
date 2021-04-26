@@ -1,0 +1,20 @@
+{
+  "name": "hola",
+  "anniversaryDate": "25/04/2021",
+  "image": null,
+  "username": "hey",
+  "nickname": "kee",
+  "principalEmail": "bryanfajardo512@gmail.com",
+  "password": "1234",
+  "userType": "BUSINESS",
+  "userStatus": "ACTIVE",
+  "address": {
+    "address": "Ciudad Juan Bosch, Boulebar Str",
+    "secondAddress": "Apt. Dos Amigos, 77, 1-C",
+    "latitude": 18.489192550973648,
+    "longitude": -69.74473485901105,
+    "city": "Santo Domingo Este",
+    "country": "República Dominicana",
+    "countryCode": "DO"
+  }
+}

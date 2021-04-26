@@ -62,9 +62,9 @@ namespace kontacto_api.Services
             return pUserDTO;
         }
 
-        private async Task<GetPrivateUserDTO> GetBusinessUserDTOAsync(string id) {
+        private async Task<GetBusinessUserDTO> GetBusinessUserDTOAsync(string id) {
             var user = await _context.Users.FindAsync(id);
-            var pUser = await _context.PrivateUsers.FindAsync(id);
+            var bUser = await _context.BusinessUsers.FindAsync(id);
 
             var addresObj = new AddressDTO {
                 Address = user.Address.Address1,
@@ -76,16 +76,10 @@ namespace kontacto_api.Services
                 CountryCode = user.Address.City.Country.Code
             };
 
-            var pUserDTO = new GetPrivateUserDTO {
+            var bUserDTO = new GetBusinessUserDTO {
                 Id = user.Id,
-                FirstName = pUser.FirstName,
-                SecondName = pUser.SecondName,
-                FirstSurname = pUser.FirstSurname,
-                SecondSurname = pUser.SecondSurname,
-                WorkName = user.BusinessUser.Name,
-                IsWorking = pUser.IsWorking,
-                Ocupation = pUser.Ocupation,
-                BirthDate = pUser.BirthDate.ToString("dd/MM/yyyy"),
+                Name = bUser.Name,
+                AnniversaryDate = bUser.AnniversaryDate.ToString("dd/MM/yyyy"),
                 Image = "",
                 Username = user.Username,
                 Nickname = user.Nickname,
@@ -95,7 +89,7 @@ namespace kontacto_api.Services
                 Address = addresObj
             };
 
-            return pUserDTO;
+            return bUserDTO;
         }
 
         public async Task<Object> GetUserAsync(string id) {
@@ -159,6 +153,39 @@ namespace kontacto_api.Services
             await _context.SaveChangesAsync();
 
             return pUser;
+        }
+
+        public async Task<BusinessUser> CreateNewBusinessUserAsync(BusinessUserDTO bUserDTO) {
+            var userType = await _context.UserTypes.Where(t => t.Type == bUserDTO.UserType).FirstOrDefaultAsync();
+            var userStatus = await _context.UserStatuses.Where(s => s.Status == bUserDTO.UserStatus).FirstOrDefaultAsync();
+            var address = await _context.Addresses.Where(a => a.Address1 == bUserDTO.Address.Address).FirstOrDefaultAsync();
+
+            var user = new User {
+                Id = Guid.NewGuid().ToString(),
+                Image = null,
+                Username = bUserDTO.Username,
+                Nickname = bUserDTO.Nickname,
+                PrincipalEmail = bUserDTO.PrincipalEmail,
+                Password = bUserDTO.Password,
+                UserTypeId = userType.Id,
+                UserStatusId = userStatus.Id,
+                AddressId = address.Id,
+                LastUpade = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            user = await this.CreateNewUserAsync(user);
+
+            var bUser = new BusinessUser {
+                UserId = user.Id,
+                Name = bUserDTO.Name,
+                AnniversaryDate = DateTime.Parse(bUserDTO.AnniversaryDate)
+            };
+
+            await _context.BusinessUsers.AddAsync(bUser);
+            await _context.SaveChangesAsync();
+
+            return bUser;
         }
     }
 }

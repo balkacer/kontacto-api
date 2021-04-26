@@ -30,9 +30,16 @@ namespace kontacto_api.Controllers
         }
 
         [HttpPost("private")]
-        public async Task<IActionResult> RegisterNewPrivateUser(PrivateUserDTO userDTO) {
+        public async Task<IActionResult> RegisterNewUser(PrivateUserDTO userDTO) {
             var pUser = await _service.CreateNewPrivateUserAsync(userDTO);
             var user = await _service.GetUserAsync(pUser.UserId);
+            return Ok(new Response("", ResponseCodeEnum.SUCCESSED, user));
+        }
+
+        [HttpPost("business")]
+        public async Task<IActionResult> RegisterNewUser(BusinessUserDTO userDTO) {
+            var bUser = await _service.CreateNewBusinessUserAsync(userDTO);
+            var user = await _service.GetUserAsync(bUser.UserId);
             return Ok(new Response("", ResponseCodeEnum.SUCCESSED, user));
         }
     }
