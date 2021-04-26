@@ -1,0 +1,26 @@
+{
+  "firstName": "Enmanuel",
+  "secondName": null,
+  "firstSurname": "Balcacer",
+  "secondSurname": "Fajardo",
+  "workName": null,
+  "isWorking": false,
+  "ocupation": "Developer",
+  "birthDate": "1998/10/30",
+  "image": null,
+  "username": "enmah4k2",
+  "nickname": "Enma",
+  "principalEmail": "ebalcacer2@itla.edu.do",
+  "password": "1234",
+  "userType": "PRIVATE",
+  "userStatus": "ACTIVE",
+  "address": {
+    "address": "Ciudad Juan Bosch, Boulebar Str",
+    "secondAddress": "Apt. Dos Amigos, 77, 1-C",
+    "latitude": 18.489192550973648,
+    "longitude": -69.74473485901105,
+    "city": "Santo Domingo Este",
+    "country": "República Dominicana",
+    "countryCode": "DO"
+  }
+}
