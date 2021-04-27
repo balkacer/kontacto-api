@@ -23,24 +23,23 @@ namespace kontacto_api.Controllers
             var user = await _service.GetUserAsync(id);
             
             if (user == null) {
-                return NotFound(new Response("User not found!", ResponseCodeEnum.FAILED));
+                return NotFound(new Response<string>("User not found!", ResponseCodeEnum.FAILED));
             }
             
-            return Ok(new Response("", ResponseCodeEnum.SUCCESSED, user));
+            return Ok(new Response<object>("", ResponseCodeEnum.SUCCESSED, user));
         }
 
         [HttpPost("private")]
-        public async Task<IActionResult> RegisterNewUser(PrivateUserDTO userDTO) {
-            var pUser = await _service.CreateNewPrivateUserAsync(userDTO);
-            var user = await _service.GetUserAsync(pUser.UserId);
-            return Ok(new Response("", ResponseCodeEnum.SUCCESSED, user));
+        public async Task<IActionResult> RegisterNewUser(PrivateUserDTO user) {
+            var response = await _service.CreateNewPrivateUserAsync(user);
+            return Ok(response);
         }
 
         [HttpPost("business")]
-        public async Task<IActionResult> RegisterNewUser(BusinessUserDTO userDTO) {
-            var bUser = await _service.CreateNewBusinessUserAsync(userDTO);
-            var user = await _service.GetUserAsync(bUser.UserId);
-            return Ok(new Response("", ResponseCodeEnum.SUCCESSED, user));
+        public async Task<IActionResult> RegisterNewUser(BusinessUserDTO user) {
+            var response = await _service.CreateNewBusinessUserAsync(user);
+            return Ok(response);
         }
+
     }
 }
