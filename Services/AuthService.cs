@@ -17,7 +17,6 @@ namespace kontacto_api.Services
         {
             _context = context;
         }
-
         private async Task<GetPrivateUserDTO> GetPrivateUserDTOAsync(string id) {
             var user = await _context.Users
                 .Include(s => s.UserStatus)
@@ -63,7 +62,6 @@ namespace kontacto_api.Services
 
             return pUserDTO;
         }
-
         private async Task<GetBusinessUserDTO> GetBusinessUserDTOAsync(string id) {
 
             var user = await _context.Users
@@ -104,7 +102,6 @@ namespace kontacto_api.Services
 
             return bUserDTO;
         }
-
         public async Task<Object> GetUserAsync(string id) {
             var userType = await this.GetUserTypeAsync(id);
             if (userType == "PRIVATE") {
@@ -115,19 +112,16 @@ namespace kontacto_api.Services
             var bUser = await this.GetBusinessUserDTOAsync(id);
             return bUser;
         }
-
         private async Task<String> GetUserTypeAsync(string id) {
             var user = await _context.Users.FindAsync(id);
             var userType = await _context.UserTypes.FindAsync(user.UserTypeId);
             return userType.Type;
         }
-
         private async Task<User> CreateNewUserAsync(User user) {
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             return user;
         }
-
         public async Task<Response<GetPrivateUserDTO>> CreateNewPrivateUserAsync(PrivateUserDTO pUserDTO) {
             var userType = await _context.UserTypes.Where(t => t.Type == pUserDTO.UserType).FirstOrDefaultAsync();
             var userStatus = await _context.UserStatuses.Where(s => s.Status == pUserDTO.UserStatus).FirstOrDefaultAsync();
@@ -135,7 +129,6 @@ namespace kontacto_api.Services
             var business = await _context.BusinessUsers.Where(b => b.Name == pUserDTO.WorkName).FirstOrDefaultAsync();
             var userNameExist = await _context.Users.Where(x => x.Username == pUserDTO.Username).FirstOrDefaultAsync();
             var userPrincipalEmailExist = await _context.Users.Where(x => x.PrincipalEmail == pUserDTO.PrincipalEmail).FirstOrDefaultAsync();
-            
 
             if (userNameExist != null){
                 return new Response<GetPrivateUserDTO>("Username exist", ResponseCodeEnum.FAILED);
@@ -179,7 +172,6 @@ namespace kontacto_api.Services
             var getPrivateUser = await this.GetPrivateUserDTOAsync(pUser.UserId);
             return new Response<GetPrivateUserDTO>("User registered successfully!", ResponseCodeEnum.SUCCESSED, getPrivateUser);
         }
-
         public async Task<Response<GetBusinessUserDTO>> CreateNewBusinessUserAsync(BusinessUserDTO bUserDTO) {
             var userType = await _context.UserTypes.Where(t => t.Type == bUserDTO.UserType).FirstOrDefaultAsync();
             var userStatus = await _context.UserStatuses.Where(s => s.Status == bUserDTO.UserStatus).FirstOrDefaultAsync();
