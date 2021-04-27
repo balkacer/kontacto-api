@@ -7,7 +7,7 @@ using kontacto_api.Tools.Enums;
 namespace kontacto_api.Tools
 {
 
-    public class Response
+    public class Response<Type> where Type : class
     {
         public Response( string Message, ResponseCodeEnum Code )
         {
@@ -15,7 +15,7 @@ namespace kontacto_api.Tools
             this.Code = Code;
         }
 
-        public Response( string Message, ResponseCodeEnum Code, object Data )
+        public Response( string Message, ResponseCodeEnum Code, Type Data )
         {
             this.Message = Message;
             this.Code = Code;
@@ -24,7 +24,7 @@ namespace kontacto_api.Tools
 
         public string Message { get; set; }
         public ResponseCodeEnum Code { get; set; }
-        #nullable enable
-        public object? Data { get; set; }
+        
+        public Type Data { get; set; }
     }
 }
