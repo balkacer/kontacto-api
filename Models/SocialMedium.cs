@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 namespace kontacto_api.Models
 {
     [Table("SOCIAL_MEDIA")]
+    [Index(nameof(Url), Name = "UQ__SOCIAL_M__C5B100098FA01D7F", IsUnique = true)]
+    [Index(nameof(Name), Name = "UQ__SOCIAL_M__D9C1FA00BCB61072", IsUnique = true)]
     public partial class SocialMedium
     {
         public SocialMedium()

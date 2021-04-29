@@ -32,13 +32,13 @@ namespace kontacto_api.Controllers
         [HttpPost("private")]
         public async Task<IActionResult> RegisterNewUser(PrivateUserDTO user) {
             var response = await _service.CreateNewPrivateUserAsync(user);
-            return Ok(response);
+            return CreatedAtAction(nameof(GetUser), new { id = response.Data.Id }, response);
         }
 
         [HttpPost("business")]
         public async Task<IActionResult> RegisterNewUser(BusinessUserDTO user) {
             var response = await _service.CreateNewBusinessUserAsync(user);
-            return Ok(response);
+            return CreatedAtAction(nameof(GetUser), new { id = response.Data.Id }, response);
         }
 
     }
