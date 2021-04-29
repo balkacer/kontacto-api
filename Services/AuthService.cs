@@ -103,8 +103,11 @@ namespace kontacto_api.Services
 
             return bUserDTO;
         }
-        public async Task<Object> GetUserAsync(string id) {
+        public async Task<object> GetUserAsync(string id) {
             var userType = await this.GetUserTypeAsync(id);
+
+            if (userType == null) return null;
+
             if (userType == "PRIVATE") {
                 var pUser = await this.GetPrivateUserDTOAsync(id);
                 return pUser;
@@ -113,8 +116,10 @@ namespace kontacto_api.Services
             var bUser = await this.GetBusinessUserDTOAsync(id);
             return bUser;
         }
-        private async Task<String> GetUserTypeAsync(string id) {
+        private async Task<string> GetUserTypeAsync(string id) {
             var user = await _context.Users.FindAsync(id);
+            if (user == null) return null;
+
             var userType = await _context.UserTypes.FindAsync(user.UserTypeId);
             return userType.Type;
         }

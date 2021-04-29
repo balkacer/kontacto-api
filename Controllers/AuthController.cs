@@ -26,7 +26,7 @@ namespace kontacto_api.Controllers
                 return NotFound(new Response<string>("User not found!", ResponseCodeEnum.FAILED));
             }
             
-            return Ok(new Response<object>("", ResponseCodeEnum.SUCCESSED, user));
+            return Ok(new Response<object>("User founded!", ResponseCodeEnum.SUCCESSED, user));
         }
 
         [HttpPost("private")]
