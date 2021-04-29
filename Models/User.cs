@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 namespace kontacto_api.Models
 {
     [Table("USER")]
+    [Index(nameof(Id), Name = "UQ__USER__3214EC26A6384743", IsUnique = true)]
+    [Index(nameof(PrincipalEmail), Name = "UQ__USER__520DD73827A936D7", IsUnique = true)]
+    [Index(nameof(Username), Name = "UQ__USER__B15BE12E9D15F498", IsUnique = true)]
     public partial class User
     {
         public User()
@@ -28,7 +31,7 @@ namespace kontacto_api.Models
         [StringLength(36)]
         public string Id { get; set; }
         [Column("IMAGE")]
-        public byte[] Image { get; set; }
+        public string Image { get; set; }
         [Required]
         [Column("USERNAME")]
         [StringLength(25)]
@@ -59,7 +62,8 @@ namespace kontacto_api.Models
         [Column("CREATED_AT", TypeName = "datetime")]
         public DateTime CreatedAt { get; set; }
         [Column("LAST_UPADE", TypeName = "datetime")]
-        public DateTime? LastUpade { get; set; }
+        public DateTime LastUpade { get; set; }
+
         [ForeignKey(nameof(AddressId))]
         [InverseProperty("Users")]
         public virtual Address Address { get; set; }

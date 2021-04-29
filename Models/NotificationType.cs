@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 namespace kontacto_api.Models
 {
     [Table("NOTIFICATION_TYPE")]
+    [Index(nameof(Type), Name = "UQ__NOTIFICA__80334AA112F3081E", IsUnique = true)]
+    [Index(nameof(Message), Name = "UQ__NOTIFICA__819F327B2B706B31", IsUnique = true)]
     public partial class NotificationType
     {
         public NotificationType()
