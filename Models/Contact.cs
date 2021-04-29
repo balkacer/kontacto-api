@@ -15,12 +15,12 @@ namespace kontacto_api.Models
         [Column("CONTACT_ID")]
         [StringLength(36)]
         public string ContactId { get; set; }
-        // [Key]
+        [Key]
         [Column("USER_ID")]
         [StringLength(36)]
         public string UserId { get; set; }
         [Column("CREATED_AT", TypeName = "datetime")]
-        public DateTime? CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         [Column("NICKNAME")]
         [StringLength(25)]
         public string Nickname { get; set; }

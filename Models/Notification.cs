@@ -38,7 +38,7 @@ namespace kontacto_api.Models
         [StringLength(36)]
         public string ReceptorId { get; set; }
         [Column("CREATED_AT", TypeName = "datetime")]
-        public DateTime? CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         [ForeignKey(nameof(NotificationStatusId))]
         [InverseProperty("Notifications")]

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace kontacto_api.Models
 {
     [Table("PRIVATE_USER")]
+    [Index(nameof(UserId), Name = "UQ__PRIVATE___F3BEEBFEB0062667", IsUnique = true)]
     public partial class PrivateUser
     {
         [Key]
