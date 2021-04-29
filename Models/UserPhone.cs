@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace kontacto_api.Models
 {
     [Table("USER_PHONE")]
+    [Index(nameof(Phone), Name = "UQ__USER_PHO__D4FA0A2661B0B58B", IsUnique = true)]
     public partial class UserPhone
     {
         [Key]

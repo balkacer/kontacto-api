@@ -16,9 +16,9 @@ namespace kontacto_api.Models
         [StringLength(36)]
         public string Id { get; set; }
         [Column("IS_ACCEPTED")]
-        public bool? IsAccepted { get; set; }
+        public bool IsAccepted { get; set; }
         [Column("IS_DENIED")]
-        public bool? IsDenied { get; set; }
+        public bool IsDenied { get; set; }
         [Required]
         [Column("NOTIFICATION_ID")]
         [StringLength(36)]
