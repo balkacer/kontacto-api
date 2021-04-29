@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace kontacto_api.Models
 {
     [Table("ADDRESS_CITY")]
+    [Index(nameof(Id), Name = "UQ__ADDRESS___3214EC263A770A37", IsUnique = true)]
     public partial class AddressCity
     {
         public AddressCity()
