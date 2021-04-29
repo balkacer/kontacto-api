@@ -51,7 +51,7 @@ namespace kontacto_api.Services
                 WorkName = user.BusinessUser?.Name,
                 IsWorking = pUser.IsWorking,
                 Ocupation = pUser.Ocupation,
-                BirthDate = pUser.BirthDate.ToString("dd/MM/yyyy"),
+                BirthDate = pUser.BirthDate.ToString("yyyy/MM/dd"),
                 Image = null,
                 Username = user.Username,
                 Nickname = user.Nickname,
@@ -91,7 +91,7 @@ namespace kontacto_api.Services
             var bUserDTO = new GetBusinessUserDTO {
                 Id = user.Id,
                 Name = bUser.Name,
-                AnniversaryDate = bUser.AnniversaryDate.ToString("dd/MM/yyyy"),
+                AnniversaryDate = bUser.AnniversaryDate.ToString("yyyy/MM/dd"),
                 Image = "",
                 Username = user.Username,
                 Nickname = user.Nickname,
