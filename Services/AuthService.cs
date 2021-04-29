@@ -7,6 +7,7 @@ using kontacto_api.Models;
 using kontacto_api.Tools;
 using kontacto_api.Tools.Enums;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace kontacto_api.Services
 {
@@ -129,6 +130,12 @@ namespace kontacto_api.Services
             var business = await _context.BusinessUsers.Where(b => b.Name == pUserDTO.WorkName).FirstOrDefaultAsync();
             var userNameExist = await _context.Users.Where(x => x.Username == pUserDTO.Username).FirstOrDefaultAsync();
             var userPrincipalEmailExist = await _context.Users.Where(x => x.PrincipalEmail == pUserDTO.PrincipalEmail).FirstOrDefaultAsync();
+            var expresion = "[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}";
+            string email = pUserDTO.PrincipalEmail;
+            var actualDate = DateTime.Now;
+            var date = DateTime.Parse(pUserDTO.BirthDate);
+            var maxDaysDifference = 3650;
+            var daysDifference = actualDate.Subtract(date).TotalDays;
 
             if (userNameExist != null){
                 return new Response<GetPrivateUserDTO>("Username exist", ResponseCodeEnum.FAILED);
@@ -136,6 +143,18 @@ namespace kontacto_api.Services
             
             if (userPrincipalEmailExist != null) { 
                 return new Response<GetPrivateUserDTO>("Email exist", ResponseCodeEnum.FAILED);
+            }
+
+            //Check if the email is of type email
+            if (!Regex.IsMatch(email, expresion) || Regex.Replace(email, expresion, string.Empty).Length != 0)
+            {
+                return new Response<GetPrivateUserDTO>("Wrong email format", ResponseCodeEnum.FAILED);
+            }
+
+            //Validate that the date entered is greater than 10 years
+            if (daysDifference <= maxDaysDifference)
+            {
+                return new Response<GetPrivateUserDTO>("The date must be greater than 10 years", ResponseCodeEnum.FAILED);
             }
 
             var user = new User
@@ -171,6 +190,8 @@ namespace kontacto_api.Services
             await _context.SaveChangesAsync();
             var getPrivateUser = await this.GetPrivateUserDTOAsync(pUser.UserId);
             return new Response<GetPrivateUserDTO>("User registered successfully!", ResponseCodeEnum.SUCCESSED, getPrivateUser);
+
+
         }
         public async Task<Response<GetBusinessUserDTO>> CreateNewBusinessUserAsync(BusinessUserDTO bUserDTO) {
             var userType = await _context.UserTypes.Where(t => t.Type == bUserDTO.UserType).FirstOrDefaultAsync();
@@ -178,6 +199,10 @@ namespace kontacto_api.Services
             var address = await _context.Addresses.Where(a => a.Address1 == bUserDTO.Address.Address).FirstOrDefaultAsync();
             var userNameExist = await _context.Users.Where(x => x.Username == bUserDTO.Username).FirstOrDefaultAsync();
             var userPrincipalEmailExist = await _context.Users.Where(x => x.PrincipalEmail == bUserDTO.PrincipalEmail).FirstOrDefaultAsync();
+            var expresion = "[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}";
+            string email = bUserDTO.PrincipalEmail;
+            var actualDate = DateTime.Now;
+            var date = DateTime.Parse(bUserDTO.AnniversaryDate);
 
             if (userNameExist != null)
             {
@@ -188,6 +213,19 @@ namespace kontacto_api.Services
             {
                 return new Response<GetBusinessUserDTO>("Email exist", ResponseCodeEnum.FAILED);
             }
+
+            //Check if the email is of type email
+            if (!Regex.IsMatch(email, expresion) || Regex.Replace(email, expresion, string.Empty).Length != 0)
+            {
+                return new Response<GetBusinessUserDTO>("Wrong email format", ResponseCodeEnum.FAILED);
+            }
+
+            //Validate that the entered date is not greater than the current date
+            if (date >= actualDate)
+            {
+                return new Response<GetBusinessUserDTO>("The date entered is greater than the current one", ResponseCodeEnum.FAILED);
+            }
+
 
             var user = new User
             {
