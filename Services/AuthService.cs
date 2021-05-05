@@ -7,6 +7,7 @@ using kontacto_api.Models;
 using kontacto_api.Tools;
 using kontacto_api.Tools.Enums;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace kontacto_api.Services
 {
@@ -17,7 +18,8 @@ namespace kontacto_api.Services
         {
             _context = context;
         }
-        private async Task<GetPrivateUserDTO> GetPrivateUserDTOAsync(string id) {
+        private async Task<GetPrivateUserDTO> GetPrivateUserDTOAsync(string id)
+        {
             var user = await _context.Users
                 .Include(s => s.UserStatus)
                 .Include(t => t.UserType)
@@ -31,7 +33,8 @@ namespace kontacto_api.Services
 
             var pUser = await _context.PrivateUsers.FindAsync(id);
 
-            var addresObj = new AddressDTO {
+            var addresObj = new AddressDTO
+            {
                 Address = user.Address.Address1,
                 SecondAddress = user.Address.SecondAddress,
                 Latitude = user.Address.Latitude,
@@ -41,7 +44,8 @@ namespace kontacto_api.Services
                 CountryCode = city.Country.Code
             };
 
-            var pUserDTO = new GetPrivateUserDTO {
+            var pUserDTO = new GetPrivateUserDTO
+            {
                 Id = user.Id,
                 FirstName = pUser.FirstName,
                 SecondName = pUser.SecondName,
@@ -50,8 +54,8 @@ namespace kontacto_api.Services
                 WorkName = user.BusinessUser?.Name,
                 IsWorking = pUser.IsWorking,
                 Ocupation = pUser.Ocupation,
-                BirthDate = pUser.BirthDate.ToString("dd/MM/yyyy"),
-                Image = null,
+                BirthDate = pUser.BirthDate.ToString("yyyy/MM/dd"),
+                Image = user.Image,
                 Username = user.Username,
                 Nickname = user.Nickname,
                 PrincipalEmail = user.PrincipalEmail,
@@ -62,8 +66,8 @@ namespace kontacto_api.Services
 
             return pUserDTO;
         }
-        private async Task<GetBusinessUserDTO> GetBusinessUserDTOAsync(string id) {
-
+        private async Task<GetBusinessUserDTO> GetBusinessUserDTOAsync(string id)
+        {
             var user = await _context.Users
                 .Include(s => s.UserStatus)
                 .Include(t => t.UserType)
@@ -87,11 +91,12 @@ namespace kontacto_api.Services
                 CountryCode = city.Country.Code
             };
 
-            var bUserDTO = new GetBusinessUserDTO {
+            var bUserDTO = new GetBusinessUserDTO
+            {
                 Id = user.Id,
                 Name = bUser.Name,
-                AnniversaryDate = bUser.AnniversaryDate.ToString("dd/MM/yyyy"),
-                Image = "",
+                AnniversaryDate = bUser.AnniversaryDate.ToString("yyyy/MM/dd"),
+                Image = user.Image,
                 Username = user.Username,
                 Nickname = user.Nickname,
                 PrincipalEmail = user.PrincipalEmail,
@@ -102,51 +107,102 @@ namespace kontacto_api.Services
 
             return bUserDTO;
         }
-        public async Task<object> GetUserAsync(string id) {
+        public async Task<object> GetUserAsync(string id)
+        {
             var userType = await this.GetUserTypeAsync(id);
-
-            if (userType == null) return null;
-
-            if (userType == "PRIVATE") {
-                var pUser = await this.GetPrivateUserDTOAsync(id);
-                return pUser;
-            }
-
-            var bUser = await this.GetBusinessUserDTOAsync(id);
-            return bUser;
+            return userType != null ? (
+                userType == "PRIVATE" ? await this.GetPrivateUserDTOAsync(id) :
+                await this.GetBusinessUserDTOAsync(id)) : null;
         }
-        private async Task<string> GetUserTypeAsync(string id) {
+        private async Task<string> GetUserTypeAsync(string id)
+        {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return null;
 
             var userType = await _context.UserTypes.FindAsync(user.UserTypeId);
             return userType.Type;
         }
-        private async Task<User> CreateNewUserAsync(User user) {
+        private async Task<User> CreateNewUserAsync(User user)
+        {
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             return user;
         }
-        public async Task<Response<GetPrivateUserDTO>> CreateNewPrivateUserAsync(PrivateUserDTO pUserDTO) {
+        public async Task<Response<GetPrivateUserDTO>> CreateNewPrivateUserAsync(PrivateUserDTO pUserDTO)
+        {
             var userType = await _context.UserTypes.Where(t => t.Type == pUserDTO.UserType).FirstOrDefaultAsync();
-            var userStatus = await _context.UserStatuses.Where(s => s.Status == pUserDTO.UserStatus).FirstOrDefaultAsync();
+            var userStatus = await _context.UserStatuses.Where(s => s.Status == "ACTIVE").FirstOrDefaultAsync();
             var address = await _context.Addresses.Where(a => a.Address1 == pUserDTO.Address.Address).FirstOrDefaultAsync();
             var business = await _context.BusinessUsers.Where(b => b.Name == pUserDTO.WorkName).FirstOrDefaultAsync();
             var userNameExist = await _context.Users.Where(x => x.Username == pUserDTO.Username).FirstOrDefaultAsync();
             var userPrincipalEmailExist = await _context.Users.Where(x => x.PrincipalEmail == pUserDTO.PrincipalEmail).FirstOrDefaultAsync();
+            var emailRegex = "[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}";
+            var onlyLettersRegex = "\\p{L}";
+            var email = pUserDTO.PrincipalEmail;
+            var actualDate = DateTime.Now;
+            var date = DateTime.Parse(pUserDTO.BirthDate);
+            var maxDaysDifference = 3650;
+            var daysDifference = actualDate.Subtract(date).TotalDays;
 
-            if (userNameExist != null){
+            var hasNullData = (
+                (pUserDTO.FirstName == null || pUserDTO.FirstName == "") ||
+                (pUserDTO.FirstSurname == null || pUserDTO.FirstSurname == "") ||
+                (pUserDTO.BirthDate == null || pUserDTO.BirthDate == "") ||
+                (pUserDTO.Password == null || pUserDTO.Password == "") ||
+                (pUserDTO.PrincipalEmail == null || pUserDTO.PrincipalEmail == "") ||
+                (pUserDTO.Username == null || pUserDTO.Username == "") ||
+                (pUserDTO.UserType == null || pUserDTO.UserType == "") ||
+                (pUserDTO.IsWorking == null) ||
+                (pUserDTO.Address == null)
+            );
+
+            var hasNotOnlyLetters = (
+                (!Regex.IsMatch(pUserDTO.FirstName ??= "a", onlyLettersRegex) || 
+                Regex.Replace(pUserDTO.FirstName ??= "a", onlyLettersRegex, string.Empty).Length != 0) ||
+                (!Regex.IsMatch(pUserDTO.SecondName ??= "a", onlyLettersRegex) || 
+                Regex.Replace(pUserDTO.SecondName ??= "a", onlyLettersRegex, string.Empty).Length != 0) ||
+                (!Regex.IsMatch(pUserDTO.FirstSurname ??= "a", onlyLettersRegex) || 
+                Regex.Replace(pUserDTO.FirstSurname ??= "a", onlyLettersRegex, string.Empty).Length != 0) ||
+                (!Regex.IsMatch(pUserDTO.SecondSurname ??= "a", onlyLettersRegex) || 
+                Regex.Replace(pUserDTO.SecondSurname ??= "a", onlyLettersRegex, string.Empty).Length != 0)
+            );
+
+            if (userNameExist != null)
+            {
                 return new Response<GetPrivateUserDTO>("Username exist", ResponseCodeEnum.FAILED);
-            } 
-            
-            if (userPrincipalEmailExist != null) { 
+            }
+
+            if (userPrincipalEmailExist != null)
+            {
                 return new Response<GetPrivateUserDTO>("Email exist", ResponseCodeEnum.FAILED);
+            }
+
+            // Check if the email is of type email
+            if (!Regex.IsMatch(email, emailRegex) || Regex.Replace(email, emailRegex, string.Empty).Length != 0)
+            {
+                return new Response<GetPrivateUserDTO>("Wrong email format", ResponseCodeEnum.FAILED);
+            }
+
+            // Validate that the date entered is greater than 10 years
+            if (daysDifference <= maxDaysDifference)
+            {
+                return new Response<GetPrivateUserDTO>("The date must be greater than 10 years", ResponseCodeEnum.FAILED);
+            }
+
+            if (hasNullData)
+            {
+                return new Response<GetPrivateUserDTO>("Has required fields empty", ResponseCodeEnum.FAILED);
+            }
+
+            if (hasNotOnlyLetters)
+            {
+                return new Response<GetPrivateUserDTO>("Name files only accept letters", ResponseCodeEnum.FAILED);
             }
 
             var user = new User
             {
                 Id = Guid.NewGuid().ToString(),
-                Image = null,
+                Image = pUserDTO.Image ?? null,
                 Username = pUserDTO.Username,
                 Nickname = pUserDTO.Nickname,
                 PrincipalEmail = pUserDTO.PrincipalEmail,
@@ -158,31 +214,42 @@ namespace kontacto_api.Services
                 CreatedAt = DateTime.UtcNow
             };
 
+            var userIdExist = await _context.Users.Where(x => x.Id == user.Id).FirstOrDefaultAsync();
+            user.Id = userIdExist == null ? user.Id : Guid.NewGuid().ToString();                
+
             user = await this.CreateNewUserAsync(user);
 
-            var pUser = new PrivateUser {
+            var pUser = new PrivateUser
+            {
                 UserId = user.Id,
                 FirstName = pUserDTO.FirstName,
-                SecondName = pUserDTO.SecondName,
+                SecondName = pUserDTO.SecondName == "" ? null : pUserDTO.SecondName,
                 FirstSurname = pUserDTO.FirstSurname,
-                SecondSurname = pUserDTO.SecondSurname,
-                BusinessId = null,
-                IsWorking = pUserDTO.IsWorking,
-                Ocupation = pUserDTO.Ocupation,
+                SecondSurname = pUserDTO.SecondSurname == "" ? null : pUserDTO.SecondSurname,
+                BusinessId = business.UserId == "" ? null : business.UserId,
+                IsWorking = pUserDTO.IsWorking ?? false,
+                Ocupation = pUserDTO.Ocupation == "" ? null : pUserDTO.Ocupation,
                 BirthDate = DateTime.Parse(pUserDTO.BirthDate)
             };
 
             await _context.PrivateUsers.AddAsync(pUser);
             await _context.SaveChangesAsync();
+
             var getPrivateUser = await this.GetPrivateUserDTOAsync(pUser.UserId);
+
             return new Response<GetPrivateUserDTO>("User registered successfully!", ResponseCodeEnum.SUCCESSED, getPrivateUser);
         }
-        public async Task<Response<GetBusinessUserDTO>> CreateNewBusinessUserAsync(BusinessUserDTO bUserDTO) {
+        public async Task<Response<GetBusinessUserDTO>> CreateNewBusinessUserAsync(BusinessUserDTO bUserDTO)
+        {
             var userType = await _context.UserTypes.Where(t => t.Type == bUserDTO.UserType).FirstOrDefaultAsync();
-            var userStatus = await _context.UserStatuses.Where(s => s.Status == bUserDTO.UserStatus).FirstOrDefaultAsync();
+            var userStatus = await _context.UserStatuses.Where(s => s.Status == "ACTIVE").FirstOrDefaultAsync();
             var address = await _context.Addresses.Where(a => a.Address1 == bUserDTO.Address.Address).FirstOrDefaultAsync();
             var userNameExist = await _context.Users.Where(x => x.Username == bUserDTO.Username).FirstOrDefaultAsync();
             var userPrincipalEmailExist = await _context.Users.Where(x => x.PrincipalEmail == bUserDTO.PrincipalEmail).FirstOrDefaultAsync();
+            var emailRegex = "[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}";
+            var email = bUserDTO.PrincipalEmail;
+            var actualDate = DateTime.Now;
+            var date = DateTime.Parse(bUserDTO.AnniversaryDate);
 
             if (userNameExist != null)
             {
@@ -192,6 +259,18 @@ namespace kontacto_api.Services
             if (userPrincipalEmailExist != null)
             {
                 return new Response<GetBusinessUserDTO>("Email exist", ResponseCodeEnum.FAILED);
+            }
+
+            //Check if the email is of type email
+            if (!Regex.IsMatch(email, emailRegex) || Regex.Replace(email, emailRegex, string.Empty).Length != 0)
+            {
+                return new Response<GetBusinessUserDTO>("Wrong email format", ResponseCodeEnum.FAILED);
+            }
+
+            //Validate that the entered date is not greater than the current date
+            if (date >= actualDate)
+            {
+                return new Response<GetBusinessUserDTO>("The date entered is greater than the current one", ResponseCodeEnum.FAILED);
             }
 
             var user = new User
@@ -211,7 +290,8 @@ namespace kontacto_api.Services
 
             user = await this.CreateNewUserAsync(user);
 
-            var bUser = new BusinessUser {
+            var bUser = new BusinessUser
+            {
                 UserId = user.Id,
                 Name = bUserDTO.Name,
                 AnniversaryDate = DateTime.Parse(bUserDTO.AnniversaryDate)
