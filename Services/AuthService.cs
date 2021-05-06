@@ -214,18 +214,21 @@ namespace kontacto_api.Services
                 CreatedAt = DateTime.UtcNow
             };
 
+            var userIdExist = await _context.Users.Where(x => x.Id == user.Id).FirstOrDefaultAsync();
+            user.Id = userIdExist == null ? user.Id : Guid.NewGuid().ToString();                
+
             user = await this.CreateNewUserAsync(user);
 
             var pUser = new PrivateUser
             {
                 UserId = user.Id,
                 FirstName = pUserDTO.FirstName,
-                SecondName = pUserDTO.SecondName,
+                SecondName = pUserDTO.SecondName == "" ? null : pUserDTO.SecondName,
                 FirstSurname = pUserDTO.FirstSurname,
-                SecondSurname = pUserDTO.SecondSurname,
-                BusinessId = business.UserId ?? null,
-                IsWorking = pUserDTO.IsWorking,
-                Ocupation = pUserDTO.Ocupation,
+                SecondSurname = pUserDTO.SecondSurname == "" ? null : pUserDTO.SecondSurname,
+                BusinessId = business.UserId == "" ? null : business.UserId,
+                IsWorking = pUserDTO.IsWorking ?? false,
+                Ocupation = pUserDTO.Ocupation == "" ? null : pUserDTO.Ocupation,
                 BirthDate = DateTime.Parse(pUserDTO.BirthDate)
             };
 
