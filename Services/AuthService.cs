@@ -21,7 +21,6 @@ namespace kontacto_api.Services
         private async Task<GetPrivateUserDTO> GetPrivateUserDTOAsync(string id)
         {
             var user = await _context.Users
-                .Include(s => s.UserStatus)
                 .Include(t => t.UserType)
                 .Include(a => a.Address)
                 .Include(b => b.BusinessUser)
@@ -57,10 +56,9 @@ namespace kontacto_api.Services
                 BirthDate = pUser.BirthDate.ToString("yyyy/MM/dd"),
                 Image = user.Image,
                 Username = user.Username,
-                Nickname = user.Nickname,
+                Nickname = pUser.Nickname,
                 PrincipalEmail = user.PrincipalEmail,
                 UserType = user.UserType.Type,
-                UserStatus = user.UserStatus.Status,
                 Address = addresObj
             };
 
@@ -69,7 +67,6 @@ namespace kontacto_api.Services
         private async Task<GetBusinessUserDTO> GetBusinessUserDTOAsync(string id)
         {
             var user = await _context.Users
-                .Include(s => s.UserStatus)
                 .Include(t => t.UserType)
                 .Include(a => a.Address)
                 .FirstOrDefaultAsync(u => u.Id == id);
@@ -98,10 +95,8 @@ namespace kontacto_api.Services
                 AnniversaryDate = bUser.AnniversaryDate.ToString("yyyy/MM/dd"),
                 Image = user.Image,
                 Username = user.Username,
-                Nickname = user.Nickname,
                 PrincipalEmail = user.PrincipalEmail,
                 UserType = user.UserType.Type,
-                UserStatus = user.UserStatus.Status,
                 Address = addresObj
             };
 
@@ -145,26 +140,33 @@ namespace kontacto_api.Services
             var daysDifference = actualDate.Subtract(date).TotalDays;
 
             var hasNullData = (
-                (pUserDTO.FirstName == null || pUserDTO.FirstName == "") ||
-                (pUserDTO.FirstSurname == null || pUserDTO.FirstSurname == "") ||
-                (pUserDTO.BirthDate == null || pUserDTO.BirthDate == "") ||
-                (pUserDTO.Password == null || pUserDTO.Password == "") ||
-                (pUserDTO.PrincipalEmail == null || pUserDTO.PrincipalEmail == "") ||
-                (pUserDTO.Username == null || pUserDTO.Username == "") ||
-                (pUserDTO.UserType == null || pUserDTO.UserType == "") ||
-                (pUserDTO.IsWorking == null) ||
-                (pUserDTO.Address == null)
+                pUserDTO.FirstName == null ||
+                pUserDTO.FirstName == "" ||
+                pUserDTO.FirstSurname == null ||
+                pUserDTO.FirstSurname == "" ||
+                pUserDTO.BirthDate == null ||
+                pUserDTO.BirthDate == "" ||
+                pUserDTO.Password == null ||
+                pUserDTO.Password == "" ||
+                pUserDTO.PrincipalEmail == null ||
+                pUserDTO.PrincipalEmail == "" ||
+                pUserDTO.Username == null ||
+                pUserDTO.Username == "" ||
+                pUserDTO.UserType == null ||
+                pUserDTO.UserType == "" ||
+                pUserDTO.IsWorking == null ||
+                pUserDTO.Address == null
             );
 
             var hasNotOnlyLetters = (
-                (!Regex.IsMatch(pUserDTO.FirstName ??= "a", onlyLettersRegex) || 
-                Regex.Replace(pUserDTO.FirstName ??= "a", onlyLettersRegex, string.Empty).Length != 0) ||
-                (!Regex.IsMatch(pUserDTO.SecondName ??= "a", onlyLettersRegex) || 
-                Regex.Replace(pUserDTO.SecondName ??= "a", onlyLettersRegex, string.Empty).Length != 0) ||
-                (!Regex.IsMatch(pUserDTO.FirstSurname ??= "a", onlyLettersRegex) || 
-                Regex.Replace(pUserDTO.FirstSurname ??= "a", onlyLettersRegex, string.Empty).Length != 0) ||
-                (!Regex.IsMatch(pUserDTO.SecondSurname ??= "a", onlyLettersRegex) || 
-                Regex.Replace(pUserDTO.SecondSurname ??= "a", onlyLettersRegex, string.Empty).Length != 0)
+                !Regex.IsMatch(pUserDTO.FirstName ?? "a", onlyLettersRegex) || 
+                Regex.Replace(pUserDTO.FirstName ?? "a", onlyLettersRegex, string.Empty).Length != 0 || 
+                !Regex.IsMatch(pUserDTO.SecondName ?? "a", onlyLettersRegex) ||
+                Regex.Replace(pUserDTO.SecondName ?? "a", onlyLettersRegex, string.Empty).Length != 0 ||
+                !Regex.IsMatch(pUserDTO.FirstSurname ?? "a", onlyLettersRegex) ||
+                Regex.Replace(pUserDTO.FirstSurname ?? "a", onlyLettersRegex, string.Empty).Length != 0 ||
+                !Regex.IsMatch(pUserDTO.SecondSurname ?? "a", onlyLettersRegex) || 
+                Regex.Replace(pUserDTO.SecondSurname ?? "a", onlyLettersRegex, string.Empty).Length != 0
             );
 
             if (userNameExist != null)
@@ -177,13 +179,11 @@ namespace kontacto_api.Services
                 return new Response<GetPrivateUserDTO>("Email exist", ResponseCodeEnum.FAILED);
             }
 
-            // Check if the email is of type email
             if (!Regex.IsMatch(email, emailRegex) || Regex.Replace(email, emailRegex, string.Empty).Length != 0)
             {
                 return new Response<GetPrivateUserDTO>("Wrong email format", ResponseCodeEnum.FAILED);
             }
 
-            // Validate that the date entered is greater than 10 years
             if (daysDifference <= maxDaysDifference)
             {
                 return new Response<GetPrivateUserDTO>("The date must be greater than 10 years", ResponseCodeEnum.FAILED);
@@ -196,7 +196,7 @@ namespace kontacto_api.Services
 
             if (hasNotOnlyLetters)
             {
-                return new Response<GetPrivateUserDTO>("Name files only accept letters", ResponseCodeEnum.FAILED);
+                return new Response<GetPrivateUserDTO>("Name fields only accept letters", ResponseCodeEnum.FAILED);
             }
 
             var user = new User
@@ -204,18 +204,16 @@ namespace kontacto_api.Services
                 Id = Guid.NewGuid().ToString(),
                 Image = pUserDTO.Image ?? null,
                 Username = pUserDTO.Username,
-                Nickname = pUserDTO.Nickname,
                 PrincipalEmail = pUserDTO.PrincipalEmail,
                 Password = pUserDTO.Password,
                 UserTypeId = userType.Id,
                 UserStatusId = userStatus.Id,
                 AddressId = address.Id,
-                LastUpade = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow
             };
 
             var userIdExist = await _context.Users.Where(x => x.Id == user.Id).FirstOrDefaultAsync();
-            user.Id = userIdExist == null ? user.Id : Guid.NewGuid().ToString();                
+            user.Id = userIdExist == null ? user.Id : Guid.NewGuid().ToString();
 
             user = await this.CreateNewUserAsync(user);
 
@@ -223,10 +221,11 @@ namespace kontacto_api.Services
             {
                 UserId = user.Id,
                 FirstName = pUserDTO.FirstName,
+                Nickname = pUserDTO.Nickname == "" ? null : pUserDTO.Nickname,
                 SecondName = pUserDTO.SecondName == "" ? null : pUserDTO.SecondName,
                 FirstSurname = pUserDTO.FirstSurname,
                 SecondSurname = pUserDTO.SecondSurname == "" ? null : pUserDTO.SecondSurname,
-                BusinessId = business.UserId == "" ? null : business.UserId,
+                BusinessId = business == null || business.UserId == "" ? null : business.UserId,
                 IsWorking = pUserDTO.IsWorking ?? false,
                 Ocupation = pUserDTO.Ocupation == "" ? null : pUserDTO.Ocupation,
                 BirthDate = DateTime.Parse(pUserDTO.BirthDate)
@@ -251,6 +250,15 @@ namespace kontacto_api.Services
             var actualDate = DateTime.Now;
             var date = DateTime.Parse(bUserDTO.AnniversaryDate);
 
+            var hasNullData = (
+                (bUserDTO.Name == null || bUserDTO.Name == "") ||
+                (bUserDTO.Password == null || bUserDTO.Password == "") ||
+                (bUserDTO.PrincipalEmail == null || bUserDTO.PrincipalEmail == "") ||
+                (bUserDTO.Username == null || bUserDTO.Username == "") ||
+                (bUserDTO.UserType == null || bUserDTO.UserType == "") ||
+                (bUserDTO.Address == null)
+            );
+
             if (userNameExist != null)
             {
                 return new Response<GetBusinessUserDTO>("Username exist", ResponseCodeEnum.FAILED);
@@ -261,16 +269,19 @@ namespace kontacto_api.Services
                 return new Response<GetBusinessUserDTO>("Email exist", ResponseCodeEnum.FAILED);
             }
 
-            //Check if the email is of type email
             if (!Regex.IsMatch(email, emailRegex) || Regex.Replace(email, emailRegex, string.Empty).Length != 0)
             {
                 return new Response<GetBusinessUserDTO>("Wrong email format", ResponseCodeEnum.FAILED);
             }
 
-            //Validate that the entered date is not greater than the current date
             if (date >= actualDate)
             {
                 return new Response<GetBusinessUserDTO>("The date entered is greater than the current one", ResponseCodeEnum.FAILED);
+            }
+
+            if (hasNullData)
+            {
+                return new Response<GetBusinessUserDTO>("Has required fields empty", ResponseCodeEnum.FAILED);
             }
 
             var user = new User
@@ -278,13 +289,11 @@ namespace kontacto_api.Services
                 Id = Guid.NewGuid().ToString(),
                 Image = null,
                 Username = bUserDTO.Username,
-                Nickname = bUserDTO.Nickname,
                 PrincipalEmail = bUserDTO.PrincipalEmail,
                 Password = bUserDTO.Password,
                 UserTypeId = userType.Id,
                 UserStatusId = userStatus.Id,
                 AddressId = address.Id,
-                LastUpade = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow
             };
 
