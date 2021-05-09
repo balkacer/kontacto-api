@@ -2,12 +2,10 @@
   "name": "hola",
   "anniversaryDate": "2021/04/25",
   "image": null,
-  "username": "hey",
-  "nickname": "kee",
+  "username": "kukiku",
   "principalEmail": "bryanfajardo512@gmail.com",
   "password": "1234",
   "userType": "BUSINESS",
-  "userStatus": "ACTIVE",
   "address": {
     "address": "Ciudad Juan Bosch, Boulebar Str",
     "secondAddress": "Apt. Dos Amigos, 77, 1-C",

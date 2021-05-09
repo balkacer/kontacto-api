@@ -42,7 +42,6 @@ namespace kontacto_api.DTO
         public string Nickname { get; set; }
         public string PrincipalEmail { get; set; }
         public string UserType { get; set; }
-        public string UserStatus { get; set; }
         public AddressDTO Address { get; set; }
     }
 }
