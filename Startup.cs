@@ -34,6 +34,7 @@ namespace kontacto_api
             }, ServiceLifetime.Transient);
 
             services.AddControllers();
+            services.AddCors();
 
             services.AddScoped<AuthService>();
             
@@ -50,6 +51,13 @@ namespace kontacto_api
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "kontacto_api v1"));
             }
+
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()); // allow credentials
 
             app.UseHttpsRedirection();
 
