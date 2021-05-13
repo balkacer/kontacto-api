@@ -26,6 +26,8 @@ namespace kontacto_api.Services
                 .Include(b => b.BusinessUser)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
+            if (user == null) return (null);
+
             var city = await _context.AddressCities
                 .Include(c => c.Country)
                 .FirstOrDefaultAsync(ct => ct.Id == user.Address.CityId);
@@ -70,6 +72,8 @@ namespace kontacto_api.Services
                 .Include(t => t.UserType)
                 .Include(a => a.Address)
                 .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null) return (null);
 
             var city = await _context.AddressCities
                 .Include(c => c.Country)
