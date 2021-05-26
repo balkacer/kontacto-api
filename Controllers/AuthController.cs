@@ -23,10 +23,10 @@ namespace kontacto_api.Controllers
             var user = await _service.GetUserAsync(id);
             
             if (user == null) {
-                return NotFound(new Response<string>("User not found!", ResponseCodeEnum.FAILED));
+                return NotFound();
             }
             
-            return Ok(new Response<object>("User founded!", ResponseCodeEnum.SUCCESSED, user));
+            return Ok(new Response<object>("User founded!", ResponseCodeEnum.SUCCESS, user));
         }
 
         [HttpPost("private")]
