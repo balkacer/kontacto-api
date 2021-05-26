@@ -11,10 +11,10 @@ using System.Text.RegularExpressions;
 
 namespace kontacto_api.Services
 {
-    public class AuthService
+    public class UserService
     {
         private readonly KontactoContext _context;
-        public AuthService(KontactoContext context)
+        public UserService(KontactoContext context)
         {
             _context = context;
         }

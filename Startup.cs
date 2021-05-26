@@ -36,7 +36,7 @@ namespace kontacto_api
             services.AddControllers();
             services.AddCors();
 
-            services.AddScoped<AuthService>();
+            services.AddScoped<UserService>();
             
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "kontacto_api", Version = "v1" });

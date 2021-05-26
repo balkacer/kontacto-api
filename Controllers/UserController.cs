@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace kontacto_api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    [Route("api/user")]
+    public class UserController : ControllerBase
     {
-        private readonly AuthService _service;
-        public AuthController(AuthService service)
+        private readonly UserService _service;
+        public UserController(UserService service)
         {
             _service = service;
         }
