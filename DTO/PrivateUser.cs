@@ -13,7 +13,7 @@ namespace kontacto_api.DTO
         public string? WorkName { get; set; }
         public bool? IsWorking { get; set; }
         #nullable disable
-        public string Ocupation { get; set; }
+        public string Occupation { get; set; }
         public string BirthDate { get; set; }
         public string Image { get; set; }
         public string Username { get; set; }
@@ -35,7 +35,7 @@ namespace kontacto_api.DTO
         public string? WorkName { get; set; }
         public bool? IsWorking { get; set; }
         #nullable disable
-        public string Ocupation { get; set; }
+        public string Occupation { get; set; }
         public string BirthDate { get; set; }
         public string Image { get; set; }
         public string Username { get; set; }

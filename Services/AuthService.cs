@@ -54,7 +54,7 @@ namespace kontacto_api.Services
                 SecondSurname = pUser.SecondSurname,
                 WorkName = user.BusinessUser?.Name,
                 IsWorking = pUser.IsWorking,
-                Ocupation = pUser.Ocupation,
+                Occupation = pUser.Occupation,
                 BirthDate = pUser.BirthDate.ToString("yyyy/MM/dd"),
                 Image = user.Image,
                 Username = user.Username,
@@ -231,7 +231,7 @@ namespace kontacto_api.Services
                 SecondSurname = pUserDTO.SecondSurname == "" ? null : pUserDTO.SecondSurname,
                 BusinessId = business == null || business.UserId == "" ? null : business.UserId,
                 IsWorking = pUserDTO.IsWorking ?? false,
-                Ocupation = pUserDTO.Ocupation == "" ? null : pUserDTO.Ocupation,
+                Occupation = pUserDTO.Occupation == "" ? null : pUserDTO.Occupation,
                 BirthDate = DateTime.Parse(pUserDTO.BirthDate)
             };
 
@@ -240,7 +240,7 @@ namespace kontacto_api.Services
 
             var getPrivateUser = await this.GetPrivateUserDTOAsync(pUser.UserId);
 
-            return new Response<GetPrivateUserDTO>("User registered successfully!", ResponseCodeEnum.SUCCESSED, getPrivateUser);
+            return new Response<GetPrivateUserDTO>("User registered successfully!", ResponseCodeEnum.SUCCESS, getPrivateUser);
         }
         public async Task<Response<GetBusinessUserDTO>> CreateNewBusinessUserAsync(BusinessUserDTO bUserDTO)
         {
@@ -313,7 +313,7 @@ namespace kontacto_api.Services
             await _context.BusinessUsers.AddAsync(bUser);
             await _context.SaveChangesAsync();
             var getBusinessUser = await this.GetBusinessUserDTOAsync(bUser.UserId);
-            return new Response<GetBusinessUserDTO>("User registered successfully!", ResponseCodeEnum.SUCCESSED, getBusinessUser);
+            return new Response<GetBusinessUserDTO>("User registered successfully!", ResponseCodeEnum.SUCCESS, getBusinessUser);
         }
     }
 }
