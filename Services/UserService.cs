@@ -163,13 +163,13 @@ namespace kontacto_api.Services
             );
 
             var hasNotOnlyLetters = (
-                !Regex.IsMatch(pUserDTO.FirstName ?? "a", onlyLettersRegex) || 
-                Regex.Replace(pUserDTO.FirstName ?? "a", onlyLettersRegex, string.Empty).Length != 0 || 
+                !Regex.IsMatch(pUserDTO.FirstName ?? "a", onlyLettersRegex) ||
+                Regex.Replace(pUserDTO.FirstName ?? "a", onlyLettersRegex, string.Empty).Length != 0 ||
                 !Regex.IsMatch(pUserDTO.SecondName ?? "a", onlyLettersRegex) ||
                 Regex.Replace(pUserDTO.SecondName ?? "a", onlyLettersRegex, string.Empty).Length != 0 ||
                 !Regex.IsMatch(pUserDTO.FirstSurname ?? "a", onlyLettersRegex) ||
                 Regex.Replace(pUserDTO.FirstSurname ?? "a", onlyLettersRegex, string.Empty).Length != 0 ||
-                !Regex.IsMatch(pUserDTO.SecondSurname ?? "a", onlyLettersRegex) || 
+                !Regex.IsMatch(pUserDTO.SecondSurname ?? "a", onlyLettersRegex) ||
                 Regex.Replace(pUserDTO.SecondSurname ?? "a", onlyLettersRegex, string.Empty).Length != 0
             );
 
@@ -209,7 +209,7 @@ namespace kontacto_api.Services
                 Image = pUserDTO.Image ?? null,
                 Username = pUserDTO.Username,
                 PrincipalEmail = pUserDTO.PrincipalEmail,
-                Password = Encryptor.Encrypt(Encryptor.Encrypt(pUserDTO.Password)),
+                Password = Encryptor.Encrypt(pUserDTO.Password, 2),
                 UserTypeId = userType.Id,
                 UserStatusId = userStatus.Id,
                 AddressId = address.Id,
@@ -294,7 +294,7 @@ namespace kontacto_api.Services
                 Image = null,
                 Username = bUserDTO.Username,
                 PrincipalEmail = bUserDTO.PrincipalEmail,
-                Password = Encryptor.Encrypt(Encryptor.Encrypt(bUserDTO.Password)),
+                Password = Encryptor.Encrypt(bUserDTO.Password, 2),
                 UserTypeId = userType.Id,
                 UserStatusId = userStatus.Id,
                 AddressId = address.Id,
