@@ -17,7 +17,7 @@ namespace kontacto_api.Controllers
             _service = service;
         }
 
-        [HttpGet("user/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(string id)
         {
             var user = await _service.GetUserAsync(id);
@@ -26,7 +26,7 @@ namespace kontacto_api.Controllers
                 return NotFound();
             }
             
-            return Ok(new Response<object>("User founded!", ResponseCodeEnum.SUCCESS, user));
+            return Ok(new Response<object>("User founded!", ResponseCode.SUCCESS, user));
         }
 
         [HttpPost("private")]
