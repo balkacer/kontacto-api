@@ -8,6 +8,7 @@ using kontacto_api.Tools;
 using kontacto_api.Tools.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using static kontacto_api.Tools.Encryptor;
 
 namespace kontacto_api.Services
 {
@@ -146,18 +147,25 @@ namespace kontacto_api.Services
             var hasNullData = (
                 pUserDTO.FirstName == null ||
                 pUserDTO.FirstName == "" ||
+                pUserDTO.FirstName == " " ||
                 pUserDTO.FirstSurname == null ||
                 pUserDTO.FirstSurname == "" ||
+                pUserDTO.FirstSurname == " " ||
                 pUserDTO.BirthDate == null ||
                 pUserDTO.BirthDate == "" ||
+                pUserDTO.BirthDate == " " ||
                 pUserDTO.Password == null ||
                 pUserDTO.Password == "" ||
+                pUserDTO.Password == " " ||
                 pUserDTO.PrincipalEmail == null ||
                 pUserDTO.PrincipalEmail == "" ||
+                pUserDTO.PrincipalEmail == " " ||
                 pUserDTO.Username == null ||
                 pUserDTO.Username == "" ||
+                pUserDTO.Username == " " ||
                 pUserDTO.UserType == null ||
                 pUserDTO.UserType == "" ||
+                pUserDTO.UserType == " " ||
                 pUserDTO.IsWorking == null ||
                 pUserDTO.Address == null
             );
@@ -175,32 +183,32 @@ namespace kontacto_api.Services
 
             if (userNameExist != null)
             {
-                return new Response<GetPrivateUserDTO>("Username exist", ResponseCodeEnum.FAILED);
+                return new Response<GetPrivateUserDTO>("Username exist", ResponseCode.FAILED);
             }
 
             if (userPrincipalEmailExist != null)
             {
-                return new Response<GetPrivateUserDTO>("Email exist", ResponseCodeEnum.FAILED);
+                return new Response<GetPrivateUserDTO>("Email exist", ResponseCode.FAILED);
             }
 
             if (!Regex.IsMatch(email, emailRegex) || Regex.Replace(email, emailRegex, string.Empty).Length != 0)
             {
-                return new Response<GetPrivateUserDTO>("Wrong email format", ResponseCodeEnum.FAILED);
+                return new Response<GetPrivateUserDTO>("Wrong email format", ResponseCode.FAILED);
             }
 
             if (daysDifference <= maxDaysDifference)
             {
-                return new Response<GetPrivateUserDTO>("The date must be greater than 10 years", ResponseCodeEnum.FAILED);
+                return new Response<GetPrivateUserDTO>("The date must be greater than 10 years", ResponseCode.FAILED);
             }
 
             if (hasNullData)
             {
-                return new Response<GetPrivateUserDTO>("Has required fields empty", ResponseCodeEnum.FAILED);
+                return new Response<GetPrivateUserDTO>("Has required fields empty", ResponseCode.FAILED);
             }
 
             if (hasNotOnlyLetters)
             {
-                return new Response<GetPrivateUserDTO>("Name fields only accept letters", ResponseCodeEnum.FAILED);
+                return new Response<GetPrivateUserDTO>("Name fields only accept letters", ResponseCode.FAILED);
             }
 
             var user = new User
@@ -209,7 +217,7 @@ namespace kontacto_api.Services
                 Image = pUserDTO.Image ?? null,
                 Username = pUserDTO.Username,
                 PrincipalEmail = pUserDTO.PrincipalEmail,
-                Password = Encryptor.Encrypt(pUserDTO.Password, 2),
+                Password = Encrypt(pUserDTO.Password, 2),
                 UserTypeId = userType.Id,
                 UserStatusId = userStatus.Id,
                 AddressId = address.Id,
@@ -240,7 +248,7 @@ namespace kontacto_api.Services
 
             var getPrivateUser = await this.GetPrivateUserDTOAsync(pUser.UserId);
 
-            return new Response<GetPrivateUserDTO>("User registered successfully!", ResponseCodeEnum.SUCCESS, getPrivateUser);
+            return new Response<GetPrivateUserDTO>("User registered successfully!", ResponseCode.SUCCESS, getPrivateUser);
         }
         public async Task<Response<GetBusinessUserDTO>> CreateNewBusinessUserAsync(BusinessUserDTO bUserDTO)
         {
@@ -265,27 +273,27 @@ namespace kontacto_api.Services
 
             if (userNameExist != null)
             {
-                return new Response<GetBusinessUserDTO>("Username exist", ResponseCodeEnum.FAILED);
+                return new Response<GetBusinessUserDTO>("Username exist", ResponseCode.FAILED);
             }
 
             if (userPrincipalEmailExist != null)
             {
-                return new Response<GetBusinessUserDTO>("Email exist", ResponseCodeEnum.FAILED);
+                return new Response<GetBusinessUserDTO>("Email exist", ResponseCode.FAILED);
             }
 
             if (!Regex.IsMatch(email, emailRegex) || Regex.Replace(email, emailRegex, string.Empty).Length != 0)
             {
-                return new Response<GetBusinessUserDTO>("Wrong email format", ResponseCodeEnum.FAILED);
+                return new Response<GetBusinessUserDTO>("Wrong email format", ResponseCode.FAILED);
             }
 
             if (date >= actualDate)
             {
-                return new Response<GetBusinessUserDTO>("The date entered is greater than the current one", ResponseCodeEnum.FAILED);
+                return new Response<GetBusinessUserDTO>("The date entered is greater than the current one", ResponseCode.FAILED);
             }
 
             if (hasNullData)
             {
-                return new Response<GetBusinessUserDTO>("Has required fields empty", ResponseCodeEnum.FAILED);
+                return new Response<GetBusinessUserDTO>("Has required fields empty", ResponseCode.FAILED);
             }
 
             var user = new User
@@ -294,7 +302,7 @@ namespace kontacto_api.Services
                 Image = null,
                 Username = bUserDTO.Username,
                 PrincipalEmail = bUserDTO.PrincipalEmail,
-                Password = Encryptor.Encrypt(bUserDTO.Password, 2),
+                Password = Encrypt(bUserDTO.Password, 2),
                 UserTypeId = userType.Id,
                 UserStatusId = userStatus.Id,
                 AddressId = address.Id,
@@ -313,7 +321,7 @@ namespace kontacto_api.Services
             await _context.BusinessUsers.AddAsync(bUser);
             await _context.SaveChangesAsync();
             var getBusinessUser = await this.GetBusinessUserDTOAsync(bUser.UserId);
-            return new Response<GetBusinessUserDTO>("User registered successfully!", ResponseCodeEnum.SUCCESS, getBusinessUser);
+            return new Response<GetBusinessUserDTO>("User registered successfully!", ResponseCode.SUCCESS, getBusinessUser);
         }
     }
 }
