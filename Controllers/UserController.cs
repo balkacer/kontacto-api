@@ -8,25 +8,25 @@ using System.Threading.Tasks;
 namespace kontacto_api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    [Route("api/user")]
+    public class UserController : ControllerBase
     {
-        private readonly AuthService _service;
-        public AuthController(AuthService service)
+        private readonly UserService _service;
+        public UserController(UserService service)
         {
             _service = service;
         }
 
-        [HttpGet("user/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(string id)
         {
             var user = await _service.GetUserAsync(id);
             
             if (user == null) {
-                return NotFound(new Response<string>("User not found!", ResponseCodeEnum.FAILED));
+                return NotFound();
             }
             
-            return Ok(new Response<object>("User founded!", ResponseCodeEnum.SUCCESSED, user));
+            return Ok(new Response<object>("User founded!", ResponseCode.SUCCESS, user));
         }
 
         [HttpPost("private")]

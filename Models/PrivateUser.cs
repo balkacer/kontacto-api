@@ -15,7 +15,7 @@ namespace kontacto_api.Models
         public string Nickname { get; set; }
         public string BusinessId { get; set; }
         public bool IsWorking { get; set; }
-        public string Ocupation { get; set; }
+        public string Occupation { get; set; }
         public DateTime BirthDate { get; set; }
 
         public virtual BusinessUser Business { get; set; }

@@ -512,10 +512,10 @@ namespace kontacto_api.Data
                     .IsUnicode(false)
                     .HasColumnName("NICKNAME");
 
-                entity.Property(e => e.Ocupation)
+                entity.Property(e => e.Occupation)
                     .HasMaxLength(256)
                     .IsUnicode(false)
-                    .HasColumnName("OCUPATION");
+                    .HasColumnName("OCCUPATION");
 
                 entity.Property(e => e.SecondName)
                     .HasMaxLength(25)
