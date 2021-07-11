@@ -8,6 +8,5 @@ namespace kontacto_api.DTO
         public decimal Longitude { get; set; }
         public string City { get; set; }
         public string Country { get; set; }
-        public string CountryCode { get; set; }
     }
 }

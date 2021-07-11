@@ -43,7 +43,6 @@ namespace kontacto_api.Services
                 Longitude = user.Address.Longitude,
                 City = city.Name,
                 Country = city.Country.Name,
-                CountryCode = city.Country.Code
             };
 
             var pUserDTO = new GetPrivateUserDTO
@@ -90,7 +89,6 @@ namespace kontacto_api.Services
                 Longitude = user.Address.Longitude,
                 City = city.Name,
                 Country = city.Country.Name,
-                CountryCode = city.Country.Code
             };
 
             var bUserDTO = new GetBusinessUserDTO
